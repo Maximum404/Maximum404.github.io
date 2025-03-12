@@ -18,10 +18,7 @@
 
     <meta charset="UTF-8" />
     <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
-    <meta
-      name="description"
-      content="Квантомаркет - платформа для учеников Кванториума"
-    />
+    <meta name="description" content="Платформа для учеников Кванториума" />
 
     <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,64 +34,598 @@
 
     <script>
       // The value below is injected by flutter build, do not touch.
-      const serviceWorkerVersion = "4146403582";
+      const serviceWorkerVersion = "576721100";
     </script>
+
     <!-- This script adds the flutter initialization JS code -->
-    <script src="flutter.js" defer></script>
+    <script src="flutter.js"></script>
+
     <style>
       body {
         background-color: #121212;
         margin: 0;
-        padding: 0;
         overflow: hidden;
+        font-family: "Roboto", "Segoe UI", sans-serif;
       }
 
-      .loader {
+      #splash {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         width: 100vw;
-        position: fixed;
-        background-color: #121212;
-        z-index: 9999;
+        flex-direction: column;
+        position: relative;
+        z-index: 10;
       }
 
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 4px solid rgba(29, 185, 84, 0.3);
-        border-top-color: #1db954;
-        animation: spin 1s ease-in-out infinite;
+      .app-title {
+        color: #1db954;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 100;
+      }
+
+      .spinner-container {
+        width: 80%;
+        max-width: 400px;
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 100;
+      }
+
+      .spinner-text {
+        color: #fff;
+        margin-bottom: 20px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 6px;
+        background-color: #2a2a2a;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 15px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 20%;
+        background-color: #1db954;
+        border-radius: 3px;
+        animation: progress 2s infinite ease-in-out;
+      }
+
+      .status-text {
+        color: #8e8e8e;
+        font-size: 14px;
+        margin-top: 5px;
+        text-align: center;
+      }
+
+      /* Новые стили для логов внизу экрана */
+      .minimal-logs-container {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .minimal-log {
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        color: #00ff00;
+        text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 4px 15px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        max-width: 80%;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-out;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .minimal-log.fade-in {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInLog 0.5s forwards;
+      }
+
+      .minimal-log.fade-out {
+        opacity: 1;
+        transform: translateY(0);
+        animation: fadeOutLog 0.5s forwards;
+      }
+
+      .spinner-icon {
+        display: inline-block;
+        margin-right: 10px;
+        animation: spin 1.5s linear infinite;
+      }
+
+      .dots-animation {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: bottom;
+        width: 30px;
+        height: 1em;
+        position: relative;
+      }
+
+      .dots-animation:after {
+        content: "...";
+        animation: dots 1.5s steps(4, end) infinite;
+        display: inline-block;
+        position: absolute;
+        left: 0;
+      }
+
+      .progress-dots {
+        margin-left: 5px;
+        margin-right: 5px;
+        animation: progressDots 1.5s infinite;
       }
 
       @keyframes spin {
-        to {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
           transform: rotate(360deg);
         }
+      }
+
+      @keyframes dots {
+        0%,
+        20% {
+          content: ".";
+        }
+        40% {
+          content: "..";
+        }
+        60% {
+          content: "...";
+        }
+        80%,
+        100% {
+          content: "";
+        }
+      }
+
+      @keyframes progressDots {
+        0% {
+          content: "[    ]";
+        }
+        25% {
+          content: "[=   ]";
+        }
+        50% {
+          content: "[==  ]";
+        }
+        75% {
+          content: "[=== ]";
+        }
+        100% {
+          content: "[====]";
+        }
+      }
+
+      /* Удаляем старые стили терминальных логов */
+      .terminal-logs-background {
+        display: none;
+      }
+
+      @keyframes fadeInLog {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeOutLog {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes progress {
+        0% {
+          width: 0%;
+          margin-left: 0%;
+        }
+        50% {
+          width: 30%;
+          margin-left: 70%;
+        }
+        100% {
+          width: 0%;
+          margin-left: 0%;
+        }
+      }
+
+      #debug-console {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.8);
+        color: #1db954;
+        font-family: monospace;
+        font-size: 12px;
+        padding: 10px;
+        max-height: 30vh;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none; /* Консоль скрыта по умолчанию */
       }
     </style>
   </head>
   <body>
-    <div class="loader" id="loader">
-      <div class="spinner"></div>
+    <!-- Новый контейнер для минималистичных логов внизу -->
+    <div class="minimal-logs-container" id="minimal-logs">
+      <!-- Логи будут добавляться динамически -->
     </div>
 
+    <!-- Загрузочный экран -->
+    <div id="splash">
+      <div class="app-title">Квантомаркет</div>
+      <div class="spinner-container">
+        <div class="spinner-text">Загрузка приложения</div>
+        <div class="progress-container">
+          <div class="progress-bar"></div>
+        </div>
+        <div id="loading-status" class="status-text">Инициализация...</div>
+      </div>
+    </div>
+
+    <!-- Консоль для отладки -->
+    <div id="debug-console"></div>
+
     <script>
-      window.addEventListener("load", function (ev) {
-        // Download main.dart.js
-        _flutter.loader.loadEntrypoint({
-          serviceWorker: {
-            serviceWorkerVersion: serviceWorkerVersion,
-          },
-          onEntrypointLoaded: function (engineInitializer) {
-            engineInitializer.initializeEngine().then(function (appRunner) {
-              appRunner.runApp();
-              document.getElementById("loader").style.display = "none";
-            });
-          },
+      // Перехватываем все ошибки и логируем их
+      window.onerror = function (message, source, lineno, colno, error) {
+        logToConsole("ОШИБКА: " + message + " в " + source + ":" + lineno);
+        return false;
+      };
+
+      // Функция для логирования в нашу консоль
+      function logToConsole(message) {
+        // Не показываем консоль визуально, только логируем в браузерную консоль
+        window.console.log(message);
+      }
+
+      // Сообщения о загрузке
+      const loadingMessages = [
+        "Инициализация приложения...",
+        "Загрузка ресурсов...",
+        "Подключение к серверу...",
+        "Подготовка интерфейса...",
+        "Запуск приложения...",
+      ];
+
+      // Обновленные типы анимации для логов
+      const logAnimationTypes = [
+        { icon: "/", spinAnimation: true },
+        { icon: ">", dotsAnimation: true },
+        { icon: "#", progressIndicator: true },
+        { icon: ">", progressDots: true },
+        { icon: "$", spinAnimation: true },
+        { icon: "|", spinAnimation: true },
+        { icon: "◢", spinAnimation: true },
+        { icon: "◣", spinAnimation: true },
+      ];
+
+      // Сокращенный массив логов
+      const minimalLogs = [
+        "Инициализация системы",
+        "Загрузка ресурсов",
+        "Проверка целостности данных",
+        "Подключение к серверу",
+        "Подготовка интерфейса",
+        "Кэширование файлов",
+        "Оптимизация производительности",
+        "Проверка безопасности",
+      ];
+
+      function getRandomDelay() {
+        return Math.floor(Math.random() * 500) + 100; // от 100 до 600 мс
+      }
+
+      function getRandomTechSymbol(count = 1) {
+        let result = "";
+        for (let i = 0; i < count; i++) {
+          const randomIndex = Math.floor(Math.random() * techSymbols.length);
+          result += techSymbols[randomIndex];
+        }
+        return result;
+      }
+
+      function createLogLine(message, level = "info") {
+        const logLine = document.createElement("div");
+        logLine.className = `log-line log-${level}`;
+
+        // Увеличиваем количество символов до и после сообщения
+        const prefix = getRandomTechSymbol(4) + " ";
+        const suffix = " " + getRandomTechSymbol(4);
+
+        // Добавляем матричный эффект в само сообщение
+        const matrixMessage = message
+          .split("")
+          .map((char) => {
+            // С вероятностью 15% добавляем технический символ после обычного символа
+            if (Math.random() < 0.15 && char !== " ") {
+              return char + getRandomTechSymbol(1);
+            }
+            return char;
+          })
+          .join("");
+
+        // Получаем текущее время для временной метки
+        const now = new Date();
+        const timestamp = `${now.getHours().toString().padStart(2, "0")}:${now
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}:${now
+          .getSeconds()
+          .toString()
+          .padStart(2, "0")}.${now
+          .getMilliseconds()
+          .toString()
+          .padStart(3, "0")}`;
+
+        // Создаем префикс с техническими символами
+        const symbolSpan = document.createElement("span");
+        symbolSpan.className = "tech-symbol";
+        symbolSpan.textContent = prefix;
+        logLine.appendChild(symbolSpan);
+
+        // Добавляем основное сообщение с матричным эффектом
+        logLine.appendChild(
+          document.createTextNode(`[${timestamp}] ${matrixMessage}`)
+        );
+
+        // Создаем суффикс с техническими символами
+        const suffixSpan = document.createElement("span");
+        suffixSpan.className = "tech-symbol";
+        suffixSpan.textContent = suffix;
+        logLine.appendChild(suffixSpan);
+
+        return logLine;
+      }
+
+      function getRandomLogAnimation() {
+        return logAnimationTypes[
+          Math.floor(Math.random() * logAnimationTypes.length)
+        ];
+      }
+
+      function createMinimalLog(message) {
+        const logElement = document.createElement("div");
+        logElement.className = "minimal-log fade-in";
+
+        const animation = getRandomLogAnimation();
+
+        // Добавляем иконку с анимацией
+        if (animation.spinAnimation) {
+          const spinner = document.createElement("span");
+          spinner.className = "spinner-icon";
+          spinner.textContent = animation.icon;
+          logElement.appendChild(spinner);
+        }
+
+        // Основное сообщение
+        const messageSpan = document.createElement("span");
+
+        if (animation.dotsAnimation) {
+          messageSpan.textContent = message + " ";
+          const dots = document.createElement("span");
+          dots.className = "dots-animation";
+          messageSpan.appendChild(dots);
+        } else if (animation.progressIndicator) {
+          messageSpan.textContent = message + " ";
+          const progress = document.createElement("span");
+          progress.textContent = "[====]";
+          progress.style.animation = "progressDots 1.5s infinite";
+          messageSpan.appendChild(progress);
+        } else if (animation.progressDots) {
+          const progressText = document.createElement("span");
+          progressText.className = "progress-dots";
+          progressText.textContent = "[    ]";
+          messageSpan.textContent = message + " ";
+          messageSpan.appendChild(progressText);
+        } else {
+          messageSpan.textContent = message;
+        }
+
+        logElement.appendChild(messageSpan);
+
+        // Убираем класс fade-in после анимации
+        setTimeout(() => {
+          logElement.classList.remove("fade-in");
+        }, 500);
+
+        return logElement;
+      }
+
+      function addMinimalLogs() {
+        const container = document.getElementById("minimal-logs");
+
+        // Очищаем контейнер
+        container.innerHTML = "";
+
+        // Добавляем только 3-5 логов
+        const logsToShow = Math.floor(Math.random() * 3) + 3; // 3-5 логов
+
+        // Создаем копию массива логов
+        const availableLogs = [...minimalLogs];
+
+        for (let i = 0; i < logsToShow; i++) {
+          const logIndex = Math.floor(Math.random() * availableLogs.length);
+          const logElement = createMinimalLog(availableLogs[logIndex]);
+          container.appendChild(logElement);
+
+          // Удаляем использованный лог, чтобы не повторялся
+          availableLogs.splice(logIndex, 1);
+
+          // Если логов не осталось, выходим из цикла
+          if (availableLogs.length === 0) break;
+        }
+
+        // Через случайный интервал обновляем один из логов
+        setTimeout(updateRandomLog, Math.random() * 1000 + 500);
+      }
+
+      // Функция для обновления случайного лога
+      function updateRandomLog() {
+        const container = document.getElementById("minimal-logs");
+        if (!container) return; // Если контейнер удален, выходим
+
+        // Выбираем случайный лог для обновления
+        const logs = container.getElementsByClassName("minimal-log");
+        if (logs.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * logs.length);
+        const logToUpdate = logs[randomIndex];
+
+        // Получаем новое сообщение из исходного массива
+        const availableLogs = minimalLogs.filter((log) => {
+          // Фильтруем только те логи, которых еще нет в контейнере
+          for (let i = 0; i < logs.length; i++) {
+            const logText = logs[i].textContent;
+            if (logText.includes(log)) return false;
+          }
+          return true;
         });
+
+        // Если есть доступные логи, обновляем
+        if (availableLogs.length > 0) {
+          const randomLogIndex = Math.floor(
+            Math.random() * availableLogs.length
+          );
+          const newLog = createMinimalLog(availableLogs[randomLogIndex]);
+
+          // Анимируем замену
+          logToUpdate.classList.add("fade-out");
+          setTimeout(() => {
+            container.replaceChild(newLog, logToUpdate);
+          }, 300);
+        }
+
+        // Планируем следующее обновление
+        setTimeout(updateRandomLog, Math.random() * 2000 + 1000);
+      }
+
+      function updateLoadingStatus() {
+        let currentIndex = 0;
+        const statusElement = document.getElementById("loading-status");
+
+        const interval = setInterval(() => {
+          if (currentIndex < loadingMessages.length) {
+            statusElement.textContent = loadingMessages[currentIndex];
+            currentIndex++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 1500);
+      }
+
+      window.addEventListener("load", function () {
+        logToConsole("Загрузка приложения...");
+        updateLoadingStatus();
+        addMinimalLogs(); // Используем новую функцию вместо addBackgroundLogs
+
+        // Функция для удаления загрузочного экрана
+        function removeSplash() {
+          document.getElementById("splash").remove();
+          document.getElementById("minimal-logs").remove();
+          logToConsole("Загрузочный экран удален");
+        }
+
+        // Простейшая инициализация Flutter
+        _flutter = {};
+        logToConsole("Инициализация Flutter...");
+
+        // Ждем загрузки Flutter
+        var timeout = setTimeout(function () {
+          // Если Flutter не загрузился за 10 секунд, просто показываем ошибку
+          if (document.getElementById("splash")) {
+            logToConsole("ОШИБКА: Flutter не загрузился за отведенное время");
+            document.getElementById("loading-status").textContent =
+              "Ошибка загрузки. Перезагрузите страницу.";
+          }
+        }, 10000);
+
+        // Перехватываем сообщения от Flutter
+        window.addEventListener("flutter-first-frame", function () {
+          logToConsole("Flutter отрендерил первый кадр");
+          document.getElementById("loading-status").textContent =
+            "Запуск приложения...";
+          // Добавляем небольшую задержку
+          setTimeout(removeSplash, 500);
+        });
+
+        // Когда Flutter.js загрузится, инициализируем приложение
+        window._flutter_web_set_location_strategy = function (strategy) {
+          logToConsole(
+            "Установлена стратегия навигации: " + (strategy || "по умолчанию")
+          );
+        };
+
+        // Отслеживаем изменения в навигации
+        window.addEventListener("popstate", function (event) {
+          logToConsole("Изменение навигации: " + window.location.pathname);
+        });
+
+        var main = document.createElement("script");
+        main.src = "main.dart.js";
+        main.type = "application/javascript";
+
+        // Отслеживаем состояние загрузки main.dart.js
+        main.onload = function () {
+          clearTimeout(timeout);
+          logToConsole("Dart-скрипт загружен успешно");
+          document.getElementById("loading-status").textContent =
+            "Инициализация Flutter...";
+        };
+
+        main.onerror = function (e) {
+          logToConsole("ОШИБКА при загрузке Dart-скрипта: " + e.message);
+          document.getElementById("loading-status").textContent =
+            "Ошибка загрузки: " + e.message;
+          clearTimeout(timeout);
+        };
+
+        logToConsole("Загружаем main.dart.js...");
+        document.body.appendChild(main);
       });
     </script>
   </body>
