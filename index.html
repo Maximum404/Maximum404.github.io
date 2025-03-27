@@ -18,100 +18,84 @@
 
     <meta charset="UTF-8" />
     <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
-    <meta
-      name="description"
-      content="Опрос для Telegram чата (тестовая версия)"
-    />
+    <meta name="description" content="AI Chat Application" />
 
     <!-- iOS meta tags & icons -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="Опрос" />
+    <meta name="apple-mobile-web-app-title" content="AI Chat" />
     <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
 
-    <title>Опрос (тестовая версия)</title>
+    <title>AI Chat</title>
     <link rel="manifest" href="manifest.json" />
-
-    <script>
-      // The value below is injected by flutter build, do not touch.
-      const serviceWorkerVersion = "1769572430";
-    </script>
-
-    <!-- This script adds the flutter initialization JS code -->
-    <script src="flutter.js" defer></script>
-
     <style>
       body {
-        background-color: #f5f5f5;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
-      }
-
-      #loading {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        background-color: #121212;
+        height: 100vh;
+        margin: 0;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        background-color: white;
-        z-index: 9999;
       }
-
-      #loading p {
-        margin-top: 16px;
-        color: #333;
-        font-size: 16px;
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
       }
-
       .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid rgba(0, 0, 0, 0.1);
-        border-left-color: #2196f3;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #2196f3;
         animation: spin 1s linear infinite;
       }
-
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
+      .text {
+        margin-top: 20px;
+        color: white;
+        font-family: Arial, sans-serif;
+      }
     </style>
+    <script>
+      // Предварительная загрузка ресурсов для ускорения
+      const serviceWorkerVersion = "778820635";
+      const scriptLoaded = function () {
+        // Инициализация Flutter
+      };
+    </script>
   </head>
   <body>
-    <div id="loading">
+    <div id="loading" class="loading">
       <div class="spinner"></div>
-      <p>Загрузка приложения...</p>
+      <div class="text">AI Chat загружается...</div>
     </div>
 
     <script>
-      window.addEventListener("load", function (ev) {
-        var loading = document.querySelector("#loading");
+      window.addEventListener("load", function () {
+        var loading = document.getElementById("loading");
 
-        // Download main.dart.js
         _flutter.loader.loadEntrypoint({
           serviceWorker: {
             serviceWorkerVersion: serviceWorkerVersion,
           },
           onEntrypointLoaded: function (engineInitializer) {
             engineInitializer.initializeEngine().then(function (appRunner) {
+              loading.style.display = "none";
               appRunner.runApp();
-              // Скрываем экран загрузки после инициализации Flutter
-              if (loading) {
-                loading.remove();
-              }
             });
           },
         });
       });
     </script>
+    <script src="flutter.js" defer></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 {
-    "name": "flutter_webapp_for_chatik_2",
-    "short_name": "flutter_webapp_for_chatik_2",
+    "name": "ai_chat",
+    "short_name": "ai_chat",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
